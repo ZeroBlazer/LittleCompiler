@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 
 [dependencies]
+token_scanner = { path = "../token_scanner" }

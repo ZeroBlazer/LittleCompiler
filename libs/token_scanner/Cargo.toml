@@ -1,5 +1,5 @@
 [package]
-name = "token-scanner"
+name = "token_scanner"
 version = "0.1.0"
 authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 
