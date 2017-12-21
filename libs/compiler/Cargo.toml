@@ -5,3 +5,4 @@ authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 
 [dependencies]
 token_scanner = { path = "../token_scanner" }
+ansi_term = "0.10.2"
