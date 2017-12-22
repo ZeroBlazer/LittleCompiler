@@ -1,0 +1,67 @@
+digit = _{ '0'..'9' }
+int   =  { digit ~ (digit | "_")* }
+float =  { int ~ "." ~ int? }
+true_lit  = { "true" }
+false_lit = { "false" }
+bool      = { true_lit | false_lit }
+alpha = { 'a'..'z' | 'A'..'Z' }
+whitespace = _{ " " }
+
+op_unary_minus =  { "-" }
+op_unary_not   =  { "!" }
+op_unary       = _{
+    op_unary_minus |
+    op_unary_not
+}
+
+op_plus          =  { "+" }
+op_minus         =  { "-" }
+op_times         =  { "*" }
+op_divide        =  { "/" }
+op_and           =  { "&&" }
+op_or            =  { "||" }
+op_greater       =  { ">" }
+op_greater_equal =  { ">=" }
+op_lower         =  { "<" }
+op_lower_equal   =  { "<=" }
+op_equal         =  { "==" }
+op_infix         = _{
+    op_plus |
+    op_minus |
+    op_times |
+    op_divide |
+    op_and |
+    op_or |
+    op_greater |
+    op_greater_equal |
+    op_lower |
+    op_lower_equal |
+    op_equal
+}
+
+paren_open  = { "(" }
+paren_close = { ")" }
+
+value = { float | int | bool | ident | paren_open ~ expr ~ paren_close }
+
+ident = { alpha ~ (alpha | digit)* | "_" ~ (alpha | digit)+ }
+// ident_list = _{ !digit ~ ident ~ (" " ~ ident)+ }
+
+int_ty  = { "int" }
+float_ty  = { "float" }
+bool_ty  = { "bool" }
+type_av = { int_ty | float_ty | bool_ty }
+type_decl = { ":" ~ type_av }
+
+dot   =  { "." }
+comma =  { "," }
+args  = _{ expr ~ (comma ~ expr)* }
+call  =  { ident ~ paren_open ~ args? ~ paren_close }
+
+rs_assign = { "=" ~ value }
+
+var_decl = { "var" ~ ident ~ ";" }
+val_decl = { "val" ~ ident ~ type_decl ~ rs_assign ~ ";" }
+
+term = { op_unary* ~ value ~ (dot ~ call)* }
+expr = { term ~ (op_infix ~ term)* }
