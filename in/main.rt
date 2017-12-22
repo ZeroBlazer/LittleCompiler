@@ -1,0 +1,24 @@
+// fn twice(x: int): int {
+//     x * 2
+// }
+
+fn main(): int {
+    var a: int = 1;
+    val b: int = 2;
+    
+    a = a + b;
+    // a = a + twice(b);
+
+    // if (true) {
+    //     bool y = true && false;
+    //     print("Hello World!");
+    // }
+
+    // if (b < a) {
+    //     print("b less than a");
+    // }
+
+    0
+}
+
+main()

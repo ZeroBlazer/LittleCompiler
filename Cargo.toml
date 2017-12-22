@@ -1,5 +1,5 @@
 [package]
-name = "little_c_compiler"
+name = "little_compiler"
 version = "0.1.0"
 authors = ["Elías Puma <elpumitaelias@gmail.com>"]
 

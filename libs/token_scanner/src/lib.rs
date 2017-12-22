@@ -3,9 +3,13 @@ use std::collections::VecDeque;
 #[derive(Debug, Clone, PartialEq)]
 pub enum TokenType {
     ID,
-    WHILE,
-    IF,
-    NUM,
+    FnSt,
+    VarSt,
+    ValSt,
+    Colon,
+    While,
+    If,
+    NumInt,
     Mas,
     Menos,
     Multiplicacion,
@@ -44,12 +48,20 @@ fn accum_token(accum: &mut VecDeque<(TokenType, String)>, token_type: &TokenType
 fn get_token_type(c: &str) -> TokenType {
     if c.is_empty() {
         Undef
+    } else if c == "fn" {
+        FnSt
+    } else if c == "var" {
+        VarSt
+    } else if c == "val" {
+        ValSt
+    } else if c == ":" {
+        Colon
     } else if c.chars().nth(0).unwrap().is_digit(10) {
-        NUM
-    } else if c == "while" {
-        WHILE
+        NumInt
+    } else if c == "While" {
+        While
     } else if c == "if" {
-        IF
+        If
     } else if c == "+" {
         Mas
     } else if c == "-" {
@@ -119,12 +131,13 @@ pub fn token_scanner(buffer: &str) -> VecDeque<(TokenType, String)> {
 
             match token_type {
                 Undef => {}
-                NUM => do_flush = !c.is_digit(10),
+                Colon => do_flush = true,
+                NumInt => do_flush = !c.is_digit(10),
                 ID => do_flush = !c.is_alphanumeric(),
                 Mayor | Menor | Asignacion | Negacion => do_flush = c != '=',
                 Division => do_flush = c != '/' && c != '*',
                 LineComment | LeftBlockComment => in_comment = true,
-                WHILE | IF => if c.is_alphanumeric() {
+                While | If => if c.is_alphanumeric() {
                     token_type = ID;
                 } else {
                     do_flush = true;
