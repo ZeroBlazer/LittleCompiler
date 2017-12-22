@@ -14,8 +14,8 @@ pub enum TokenType {
     Menos,
     Multiplicacion,
     Division,
-    Asignacion,
-    PuntoYComa,
+    Assignment,
+    SemiColon,
     Negacion,
     Mayor,
     MayorIgual,
@@ -71,9 +71,9 @@ fn get_token_type(c: &str) -> TokenType {
     } else if c == "/" {
         Division
     } else if c == "=" {
-        Asignacion
+        Assignment
     } else if c == ";" {
-        PuntoYComa
+        SemiColon
     } else if c == "!" {
         Negacion
     } else if c == "<" {
@@ -134,7 +134,7 @@ pub fn token_scanner(buffer: &str) -> VecDeque<(TokenType, String)> {
                 Colon => do_flush = true,
                 NumInt => do_flush = !c.is_digit(10),
                 ID => do_flush = !c.is_alphanumeric(),
-                Mayor | Menor | Asignacion | Negacion => do_flush = c != '=',
+                Mayor | Menor | Assignment | Negacion => do_flush = c != '=',
                 Division => do_flush = c != '/' && c != '*',
                 LineComment | LeftBlockComment => in_comment = true,
                 While | If => if c.is_alphanumeric() {
