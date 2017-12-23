@@ -1,3 +1,10 @@
+val b: int = 2.0;
 var a: float;
-fn main(_x: float): int {}
-val b: int = (2 * a);
+
+while true {}
+
+if true {}
+else {}
+
+// val b;
+// fn main(_x: float): int {}

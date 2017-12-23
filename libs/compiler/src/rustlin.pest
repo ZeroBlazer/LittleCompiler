@@ -1,84 +1,98 @@
-whitespace = _{ space | newline  }
-comment = _{ line_comment }
-line_comment = _{  "//" ~ (!newline ~ any)* }
-block_comment = _{ "/*" ~ (any)* ~ "*/" }
+input = _{ soi ~ statement* ~ eoi }
 
-newline = _{ "\n" | "\r\n" }
-space   = _{ " " | "\t" }
+//statement = { declaration | assignment | while_loop | conditional | (expr ~ semi) | comment }
+statement = { declaration | assignment | while_loop | conditional | (expr ~ semi) | comment }
 
+whitespace      = _{ space | newline }
+comment         = @{ block_comment | line_comment }
+line_comment    = _{ "//" ~ (!("\r" | "\n") ~ any)* ~ ("\n" | "\r\n" | "\r" | eoi) }
+block_comment   = _{ "/*" ~ ((!("*/") ~ any) | block_comment)* ~ "*/" }
+newline         = _{ "\n" | "\r\n" }
+space           = _{ " " | "\t" }
+semi            = { ";" }
+
+assignment  = _{ identifier ~ right_assign ~ semi }
+declaration = { val_decl | var_decl }
+val_decl    = { "val" ~ identifier ~ type_decl ~ right_assign ~ semi }
+var_decl    = { "var" ~ identifier ~ type_decl? ~ right_assign? ~ semi }
+
+right_assign = { op_assign ~ expr }
+type_decl = { op_declare_type ~ type_def }
+
+type_def    = _{ identifier }
+identifier  = @{ alpha ~ (alpha | digit)* | "_" ~ (alpha | digit)+ }
+
+conditional = { "if" ~ expr ~ block ~ (op_else_if ~ expr ~ block)* ~ (op_else ~ block)? }
+op_else_if = { "else if" }
+op_else = { "else" }
+
+while_loop = { "while" ~ expr ~ block }
+
+expr = { bool_literal | identifier | float | int }
+    // { bool_not | func_call | field_access | string_literal | bool_literal | identifier | conditional | number }
+//     { bool_not | bool_literal | identifier | int | float }
+
+//     bool_or     = { op_bool_or }
+//     bool_and    = { op_bool_and }
+    
+//     comparison  = { op_eq | op_ne | op_ge | op_le | op_gt | op_lt }
+// }
+bool_not    = _{ op_not ~ expr }
+
+block       = _{ block_start ~ statement* ~ expr? ~ block_end }
+block_start = { "{" }
+block_end   = { "}" }
+
+binary_op = _{
+  op_expo   |
+  op_mult   |
+  op_div    |
+  op_mod    |
+  op_add    |
+  op_sub    |
+  op_bsl    |
+  op_bsr    |
+  op_and    |
+  op_band   |
+  op_or     |
+  op_bor    |
+  op_bxor   |
+  op_lte    |
+  op_lt     |
+  op_gte    |
+  op_gt     |
+  op_eq     |
+  op_ne     |
+  op_assign
+}
+
+op_expo   = { "**" }
+op_mult   = { "*" }
+op_div    = { "/" }
+op_mod    = { "%" }
+op_add    = { "+" }
+op_sub    = { "-" }
+op_bsl    = { "<<" }
+op_bsr    = { ">>" }
+op_band   = { "&" }
+op_bor    = { "|" }
+op_bxor   = { "^" }
+op_lt     = { "<" }
+op_lte    = { "<=" }
+op_gt     = { ">" }
+op_gte    = { ">=" }
+op_eq     = { "==" }
+op_ne     = { "!=" }
+op_and    = { "&&" }
+op_or     = { "||" }
+op_not    = { "!" }
+op_assign = { "=" }
+op_declare_type = { ":" }
+
+true_lit    = _{ "true" }
+false_lit   = _{ "false" }
+bool_literal = @{ true_lit | false_lit }
 digit       = _{ '0'..'9' }
-int         =  { digit ~ (digit | "_")* }
-float       =  { int ~ "." ~ int? }
-true_lit    = { "true" }
-false_lit   = { "false" }
-bool        = { true_lit | false_lit }
-alpha       = { 'a'..'z' | 'A'..'Z' }
-
-op_unary_minus =  { "-" }
-op_unary_not   =  { "!" }
-op_unary       = _{
-    op_unary_minus |
-    op_unary_not
-}
-
-op_plus          =  { "+" }
-op_minus         =  { "-" }
-op_times         =  { "*" }
-op_divide        =  { "/" }
-op_and           =  { "&&" }
-op_or            =  { "||" }
-op_greater       =  { ">" }
-op_greater_equal =  { ">=" }
-op_lower         =  { "<" }
-op_lower_equal   =  { "<=" }
-op_equal         =  { "==" }
-op_infix         = _{
-    op_plus |
-    op_minus |
-    op_times |
-    op_divide |
-    op_and |
-    op_or |
-    op_greater |
-    op_greater_equal |
-    op_lower |
-    op_lower_equal |
-    op_equal
-}
-
-paren_open  = { "(" }
-paren_close = { ")" }
-
-value = { float | int | bool | ident | paren_open ~ expr ~ paren_close }
-
-ident = { alpha ~ (alpha | digit)* | "_" ~ (alpha | digit)+ }
-// ident_list = _{ !digit ~ ident ~ (" " ~ ident)+ }
-
-int_ty      = { "int" }
-float_ty    = { "float" }
-bool_ty     = { "bool" }
-def_types     = { int_ty | float_ty | bool_ty }
-type_decl   = { ":" ~ def_types }
-
-dot   =  { "." }
-comma =  { "," }
-args  = _{ expr ~ (comma ~ expr)* }
-call  =  { ident ~ paren_open ~ args? ~ paren_close }
-
-rs_assign = { "=" ~ value }
-
-fun_body = { expr | "{" ~ "}" }
-
-args_decl  = { (ident ~ type_decl) ~ (comma ~ ident ~ type_decl)* }
-var_decl = { "var" ~ ident ~ type_decl{0,1} ~ ";" | "var" ~ ident ~ type_decl ~ rs_assign ~ ";" }
-val_decl = { "val" ~ ident ~ type_decl ~ rs_assign ~ ";" }
-fun_decl = { "fn" ~ ident ~ paren_open ~ args_decl? ~ paren_close ~ fun_body }
-
-term = { op_unary* ~ value ~ (dot ~ call)* }
-expr = { term ~ (op_infix ~ term)* }
-
-statements = { statement+ }
-statement = { (var_decl | val_decl | fun_decl) }
-//statement = _{ call | expression }
-
-input = _{ soi ~ statements ~ eoi }
+int         = _{ digit ~ (digit | "_")* }
+float       = _{ int ~ "." ~ int? }
+alpha       = @{ 'a'..'z' | 'A'..'Z' }
