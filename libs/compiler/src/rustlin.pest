@@ -1,6 +1,5 @@
 input = _{ soi ~ statement* ~ eoi }
 
-//statement = { declaration | assignment | while_loop | conditional | (expr ~ semi) | comment }
 statement = { declaration | assignment | while_loop | conditional | (expr ~ semi) | comment }
 
 whitespace      = _{ space | newline }
@@ -12,9 +11,15 @@ space           = _{ " " | "\t" }
 semi            = { ";" }
 
 assignment  = _{ identifier ~ right_assign ~ semi }
-declaration = { val_decl | var_decl }
+
+declaration = { val_decl | var_decl | func_decl }
 val_decl    = { "val" ~ identifier ~ type_decl ~ right_assign ~ semi }
 var_decl    = { "var" ~ identifier ~ type_decl? ~ right_assign? ~ semi }
+func_decl   = { "fn" ~ identifier ~ func_args ~ type_decl? ~ block }
+
+func_args   = { "(" ~ args_decl ~ ")" }
+args_decl   = { arg_decl ~ ("," ~ arg_decl)* | arg_decl? }
+arg_decl    = { identifier ~ type_decl }
 
 right_assign = { op_assign ~ expr }
 type_decl = { op_declare_type ~ type_def }

@@ -1,10 +1,14 @@
-val b: int = 2.0;
-var a: float;
+fn dumb(_x: float, _y: int) {
+    val b: int = 2.0;
+    var a: float;
+}
 
-while true {}
+fn main(_x: float): int {
+    while true {}
 
-if true {}
-else {}
+    if true {
+    } else {
+    }
+}
 
 // val b;
-// fn main(_x: float): int {}
