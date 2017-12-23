@@ -1,3 +1,5 @@
+#![feature(string_retain)]
+
 // extern crate token_scanner;
 extern crate ansi_term;
 extern crate pest;
@@ -26,9 +28,11 @@ fn load_file(path: &str) -> Result<String, std::io::Error> {
 pub fn compile(path: &str) {
     if let Ok(input) = load_file(path) {
         // Steps to compile file
-        // 1. Tokenize input
-        match RustlinParser::parse_str(Rule::val_decl, &input) {
+        // input.retain(|c| c != '\n');
+        println!("{} \n", input);
+        match RustlinParser::parse_str(Rule::input, &input) {
             Ok(pairs) => {
+                println!("{:?} ", pairs);
                 pairs.for_each(|p| println!("R_{:?}: [{:?}] -> {}", p.as_rule(), p.clone().into_span(), p.clone().into_span().as_str()));
                 // println!("{:#?}", pairs);
             }

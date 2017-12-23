@@ -1,11 +1,18 @@
-digit = _{ '0'..'9' }
-int   =  { digit ~ (digit | "_")* }
-float =  { int ~ "." ~ int? }
-true_lit  = { "true" }
-false_lit = { "false" }
-bool      = { true_lit | false_lit }
-alpha = { 'a'..'z' | 'A'..'Z' }
-whitespace = _{ " " }
+whitespace = _{ space | newline  }
+comment = _{ line_comment }
+line_comment = _{  "//" ~ (!newline ~ any)* }
+block_comment = _{ "/*" ~ (any)* ~ "*/" }
+
+newline = _{ "\n" | "\r\n" }
+space   = _{ " " | "\t" }
+
+digit       = _{ '0'..'9' }
+int         =  { digit ~ (digit | "_")* }
+float       =  { int ~ "." ~ int? }
+true_lit    = { "true" }
+false_lit   = { "false" }
+bool        = { true_lit | false_lit }
+alpha       = { 'a'..'z' | 'A'..'Z' }
 
 op_unary_minus =  { "-" }
 op_unary_not   =  { "!" }
@@ -47,11 +54,11 @@ value = { float | int | bool | ident | paren_open ~ expr ~ paren_close }
 ident = { alpha ~ (alpha | digit)* | "_" ~ (alpha | digit)+ }
 // ident_list = _{ !digit ~ ident ~ (" " ~ ident)+ }
 
-int_ty  = { "int" }
-float_ty  = { "float" }
-bool_ty  = { "bool" }
-type_av = { int_ty | float_ty | bool_ty }
-type_decl = { ":" ~ type_av }
+int_ty      = { "int" }
+float_ty    = { "float" }
+bool_ty     = { "bool" }
+def_types     = { int_ty | float_ty | bool_ty }
+type_decl   = { ":" ~ def_types }
 
 dot   =  { "." }
 comma =  { "," }
@@ -60,8 +67,18 @@ call  =  { ident ~ paren_open ~ args? ~ paren_close }
 
 rs_assign = { "=" ~ value }
 
-var_decl = { "var" ~ ident ~ ";" }
+fun_body = { expr | "{" ~ "}" }
+
+args_decl  = { (ident ~ type_decl) ~ (comma ~ ident ~ type_decl)* }
+var_decl = { "var" ~ ident ~ type_decl{0,1} ~ ";" | "var" ~ ident ~ type_decl ~ rs_assign ~ ";" }
 val_decl = { "val" ~ ident ~ type_decl ~ rs_assign ~ ";" }
+fun_decl = { "fn" ~ ident ~ paren_open ~ args_decl? ~ paren_close ~ fun_body }
 
 term = { op_unary* ~ value ~ (dot ~ call)* }
 expr = { term ~ (op_infix ~ term)* }
+
+statements = { statement+ }
+statement = { (var_decl | val_decl | fun_decl) }
+//statement = _{ call | expression }
+
+input = _{ soi ~ statements ~ eoi }
