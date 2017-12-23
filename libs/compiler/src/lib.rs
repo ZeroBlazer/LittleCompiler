@@ -29,7 +29,7 @@ pub fn compile(path: &str) {
     if let Ok(input) = load_file(path) {
         // Steps to compile file
         // input.retain(|c| c != '\n');
-        println!("{} \n", input);
+        println!("{}  \n", input);
         match RustlinParser::parse_str(Rule::input, &input) {
             Ok(pairs) => {
                 println!("{:?} ", pairs);

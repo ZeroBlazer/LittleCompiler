@@ -15,11 +15,11 @@ assignment  = _{ identifier ~ right_assign ~ semi }
 declaration = { val_decl | var_decl | func_decl }
 val_decl    = { "val" ~ identifier ~ type_decl ~ right_assign ~ semi }
 var_decl    = { "var" ~ identifier ~ type_decl? ~ right_assign? ~ semi }
-func_decl   = { "fn" ~ identifier ~ func_args ~ type_decl? ~ block }
+func_decl   = { "fn" ~ identifier ~ func_decl_args ~ type_decl? ~ block }
 
-func_args   = { "(" ~ args_decl ~ ")" }
-args_decl   = { arg_decl ~ ("," ~ arg_decl)* | arg_decl? }
-arg_decl    = { identifier ~ type_decl }
+func_decl_args  = { "(" ~ args_decl ~ ")" }
+args_decl       = { arg_decl ~ ("," ~ arg_decl)* | arg_decl? }
+arg_decl        = { identifier ~ type_decl }
 
 right_assign = { op_assign ~ expr }
 type_decl = { op_declare_type ~ type_def }
@@ -33,7 +33,7 @@ op_else = { "else" }
 
 while_loop = { "while" ~ expr ~ block }
 
-expr = { bool_literal | identifier | float | int }
+expr = { bool_literal | func_call | identifier | float | int }
     // { bool_not | func_call | field_access | string_literal | bool_literal | identifier | conditional | number }
 //     { bool_not | bool_literal | identifier | int | float }
 
@@ -42,6 +42,11 @@ expr = { bool_literal | identifier | float | int }
     
 //     comparison  = { op_eq | op_ne | op_ge | op_le | op_gt | op_lt }
 // }
+
+func_call = { identifier ~ "(" ~ func_args ~ ")" }
+func_args = { func_arg ~ ("," ~ func_arg)* | func_arg? }
+func_arg  = { expr }
+
 bool_not    = _{ op_not ~ expr }
 
 block       = _{ block_start ~ statement* ~ expr? ~ block_end }
