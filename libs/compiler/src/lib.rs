@@ -9,11 +9,6 @@ use std::fs::File;
 use std::io::prelude::*;
 use pest::Parser;
 
-// mod validation;
-
-// use token_scanner::token_scanner;
-// use validation::validate_and_prefix;
-
 #[derive(Parser)]
 #[grammar = "rustlin.pest"]
 struct RustlinParser;
@@ -38,22 +33,6 @@ pub fn compile(path: &str) {
             }
             Err(e) => panic!("{}", e),
         }
-
-
-        // let tokens = token_scanner(&input);
-        // println!("TOKENS: {:?}\n", tokens);
-
-        // // 2. Validate grammar and prefix input
-        // match validate_and_prefix(tokens) {
-        //     Ok(prefixed) => {
-        //         // 3. Translate to assembly
-        //         println!("{:?}", prefixed);
-        //     }
-        //     Err(errors) => {
-        //         println!("Compilation had the following issues:");
-        //         println!("{}", errors);
-        //     }
-        // }
     } else {
         println!("Error while reading file! :/");
     }
