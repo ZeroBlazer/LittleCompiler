@@ -14,8 +14,8 @@ use pest::Parser;
 #[grammar = "rustlin.pest"]
 struct RustlinParser;
 
-mod validation;
-use validation::validate_rustlin;
+mod translation;
+use translation::validate_rustlin;
 
 fn load_file(path: &str) -> Result<String, std::io::Error> {
     let mut file = File::open(path)?;
