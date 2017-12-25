@@ -26,7 +26,8 @@ fn translate_statement(pairs: pest::iterators::Pairs<Rule, pest::inputs::StrInpu
 }
 
 pub fn translate_rustlin(pairs: pest::iterators::Pairs<Rule, pest::inputs::StrInput<'_>>) -> Result<(), String> {
-    let instr_table = 
+    let instr_table = Arc::new(Mutex::new(Vec::<Instruction>new()))
+
     for pair in pairs {
         match pair.as_rule() {
             Rule::statement => {
