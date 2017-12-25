@@ -1,3 +1,4 @@
+#![feature(underscore_lifetimes)]
 #![feature(string_retain)]
 
 // extern crate token_scanner;
@@ -13,6 +14,9 @@ use pest::Parser;
 #[grammar = "rustlin.pest"]
 struct RustlinParser;
 
+mod validation;
+use validation::validate_rustlin;
+
 fn load_file(path: &str) -> Result<String, std::io::Error> {
     let mut file = File::open(path)?;
     let mut content = String::new();
@@ -23,13 +27,24 @@ fn load_file(path: &str) -> Result<String, std::io::Error> {
 pub fn compile(path: &str) {
     if let Ok(input) = load_file(path) {
         // Steps to compile file
-        // input.retain(|c| c != '\n');
         println!("{}  \n", input);
+
+        // Eval Grammar
         match RustlinParser::parse_str(Rule::input, &input) {
             Ok(pairs) => {
-                println!("{:?} ", pairs);
-                pairs.for_each(|p| println!("R_{:?}: [{:?}] -> {}", p.as_rule(), p.clone().into_span(), p.clone().into_span().as_str()));
-                // println!("{:#?}", pairs);
+                validate_rustlin(pairs);
+                // println!("{:?} ", pairs);
+                // for pair in pairs {
+                //     match pair.as_rule() {
+                //         Rule::statement => {
+                //             println!(">>>>>>>>>>>>> {:?}", pair);
+                //         }
+                //         _ => {
+                //             println!("{:?}", pair);
+                //         }
+                //     }
+                // }
+                // pairs.for_each(|p| println!("R_{:?}: [{:?}] -> {}", p.as_rule(), p.clone().into_span(), p.clone().into_span().as_str()));
             }
             Err(e) => panic!("{}", e),
         }
