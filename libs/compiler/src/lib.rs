@@ -28,7 +28,7 @@ fn load_file(path: &str) -> Result<String, std::io::Error> {
 pub fn compile(path: &str) {
     if let Ok(input) = load_file(path) {
         // Steps to compile file
-        println!("{}\n", input);
+        println!("{} \n", input);
 
         // Eval Grammar
         match RustlinParser::parse_str(Rule::input, &input) {

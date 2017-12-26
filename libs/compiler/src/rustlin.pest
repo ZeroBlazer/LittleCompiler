@@ -6,7 +6,7 @@ whitespace      = _{ space | newline }
 comment         = @{ block_comment | line_comment }
 line_comment    = _{ "//" ~ (!("\r" | "\n") ~ any)* ~ ("\n" | "\r\n" | "\r" | eoi) }
 block_comment   = _{ "/*" ~ ((!("*/") ~ any) | block_comment)* ~ "*/" }
-newline         = _{ "\n" | "\r\n" }
+newline         = { "\n" | "\r\n" }
 space           = _{ " " | "\t" }
 semi            = { ";" }
 
@@ -33,7 +33,7 @@ op_else = { "else" }
 
 while_loop = { "while" ~ expr ~ block }
 
-expr = { bool_literal | func_call | identifier | math_expr }
+expr = { bool_literal | func_call | math_expr }
 math_expr = { math_term ~ num_op ~ math_term | math_term }
 math_term = { num | identifier }
 num = { float | int }
@@ -42,7 +42,7 @@ func_call = { identifier ~ "(" ~ func_args ~ ")" }
 func_args = { func_arg ~ ("," ~ func_arg)* | func_arg? }
 func_arg  = { expr }
 
-block       = _{ block_start ~ statement* ~ expr? ~ block_end }
+block       = _{ block_start ~ statement* ~ expr ~ block_end }
 block_start = { "{" }
 block_end   = { "}" }
 
