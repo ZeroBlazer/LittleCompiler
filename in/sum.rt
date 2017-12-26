@@ -1,2 +1,3 @@
 var ab = 10;
 var ba = 12;
+ab + ba;

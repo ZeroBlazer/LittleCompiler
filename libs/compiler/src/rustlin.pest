@@ -33,25 +33,20 @@ op_else = { "else" }
 
 while_loop = { "while" ~ expr ~ block }
 
-expr = { bool_literal | func_call | identifier | float | int }
-    // { bool_not | func_call | field_access | string_literal | bool_literal | identifier | conditional | number }
-//     { bool_not | bool_literal | identifier | int | float }
-
-//     bool_or     = { op_bool_or }
-//     bool_and    = { op_bool_and }
-    
-//     comparison  = { op_eq | op_ne | op_ge | op_le | op_gt | op_lt }
-// }
+expr = { bool_literal | func_call | identifier | float | int_expr }
+int_expr = { int_expr ~ int_op ~ int_expr | int }
 
 func_call = { identifier ~ "(" ~ func_args ~ ")" }
 func_args = { func_arg ~ ("," ~ func_arg)* | func_arg? }
 func_arg  = { expr }
 
-bool_not    = _{ op_not ~ expr }
-
 block       = _{ block_start ~ statement* ~ expr? ~ block_end }
 block_start = { "{" }
 block_end   = { "}" }
+
+int_op = { op_expo | op_mult | op_div | op_mod | op_add | op_sub }
+
+bool_not    = _{ op_not ~ expr }
 
 binary_op = _{
   op_expo   |
