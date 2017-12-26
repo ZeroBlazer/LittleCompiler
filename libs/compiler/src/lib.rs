@@ -26,15 +26,9 @@ fn load_file(path: &str) -> Result<String, std::io::Error> {
 }
 
 pub fn compile(path: &str) {
-    // PrecClimber::new(vec![
-    //     Operator::new(Rule::plus, Assoc::Left) | Operator::new(Rule::minus, Assoc::Left),
-    //     Operator::new(Rule::times, Assoc::Left) | Operator::new(Rule::divide, Assoc::Left),
-    //     Operator::new(Rule::power, Assoc::Right)
-    // ]);
-
     if let Ok(input) = load_file(path) {
         // Steps to compile file
-        println!("{} \n", input);
+        println!("{}\n", input);
 
         // Eval Grammar
         match RustlinParser::parse_str(Rule::input, &input) {
@@ -42,7 +36,7 @@ pub fn compile(path: &str) {
                 println!("{}", translate_rustlin(pairs).unwrap());
             }
             Err(e) => print!("{}\n{}",
-                             Red.bold().paint("Compilation failed at:"),
+                             Red.bold().paint("Parsing process failed at:"),
                              Yellow.bold().paint(format!("{}\n", e))),
         }
     } else {

@@ -34,8 +34,9 @@ op_else = { "else" }
 while_loop = { "while" ~ expr ~ block }
 
 expr = { bool_literal | func_call | identifier | math_expr }
-math_expr = { num ~ num_op ~ num | num }
-num = { int | float | identifier }
+math_expr = { math_term ~ num_op ~ math_term | math_term }
+math_term = { num | identifier }
+num = { float | int }
 
 func_call = { identifier ~ "(" ~ func_args ~ ")" }
 func_args = { func_arg ~ ("," ~ func_arg)* | func_arg? }

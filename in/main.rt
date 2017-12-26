@@ -2,12 +2,7 @@
 //     x * 2
 // }
 
-fn main(): int {
-    val a: int = 2;
-    var b: int;
-
-    b = 3 * a;
-    // b = a + twice(b);
+// b = a + twice(b);
 
     // if (true) {
     //     bool y = true && false;
@@ -18,7 +13,11 @@ fn main(): int {
     //     print("b less than a");
     // }
 
+fn main(): int {
+    val a: int = 2;
+    val b: int = 3 * a;
+
     0
 }
 
-main()
+main();
