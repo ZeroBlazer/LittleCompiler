@@ -30,12 +30,63 @@ impl Instruction {
 
 use self::InstructionType::*;
 
+fn translate_expr(
+    pair: pest::iterators::Pair<Rule, pest::inputs::StrInput<'_>>,
+    table: Arc<Mutex<Vec<Instruction>>>,
+) -> Result<String, String> {
+    println!("\nRULE: {:?}", pair.as_rule());
+    println!("PAIR: {:?}", pair);
+
+    // let mut val = String::new();
+
+    // for inner_pair in pair.into_inner() {
+    //     println!(">>> Inner: {:?}", inner_pair.as_rule());
+
+    //     match inner_pair.as_rule() {
+    //         Rule::expr => {
+    //             val = inner_pair.clone().into_span().as_str().to_string();
+    //         }
+    //         _ => {
+    //             println!("CASE WAS NOT HANDLED!!: {:?}", inner_pair.as_rule());
+    //         }
+    //     }
+    // }
+
+    Ok(pair.into_span().as_str().to_string())
+}
+
+fn translate_right_assign(
+    pair: pest::iterators::Pair<Rule, pest::inputs::StrInput<'_>>,
+    table: Arc<Mutex<Vec<Instruction>>>,
+) -> Result<String, String> {
+    // println!("\nRULE: {:?}", pair.as_rule());
+    // println!("PAIR: {:?}", pair);
+
+    let mut val = String::new();
+
+    for inner_pair in pair.into_inner() {
+        // println!(">>> Inner: {:?}", inner_pair.as_rule());
+
+        match inner_pair.as_rule() {
+            Rule::expr => {
+                val = translate_expr(inner_pair, table.clone())?;
+                println!("VAL {}", val);
+            }
+            _ => {
+                println!("CASE WAS NOT HANDLED!!: {:?}", inner_pair.as_rule());
+            }
+        }
+    }
+
+    Ok(val)
+}
+
 fn translate_var_decl(
     pair: pest::iterators::Pair<Rule, pest::inputs::StrInput<'_>>,
     table: Arc<Mutex<Vec<Instruction>>>,
 ) -> Result<(), String> {
-    println!("\nRULE: {:?}", pair.as_rule());
-    println!("PAIR: {:?}", pair);
+    // println!("\nRULE: {:?}", pair.as_rule());
+    // println!("PAIR: {:?}", pair);
 
     let mut instr = Instruction::new(Move, "".to_string(), "".to_string(), "".to_string());
 
@@ -46,6 +97,9 @@ fn translate_var_decl(
             Rule::identifier => {
                 instr.op1.push_str(inner_pair.clone().into_span().as_str());
                 println!("{}", inner_pair);
+            }
+            Rule::right_assign => {
+                instr.op2.push_str(translate_right_assign(inner_pair, table.clone())?.as_str());
             }
             _ => {
                 println!("CASE WAS NOT HANDLED!!: {:?}", inner_pair.as_rule());
