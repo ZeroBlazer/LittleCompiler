@@ -9,6 +9,7 @@ extern crate pest;
 use std::fs::File;
 use std::io::prelude::*;
 use pest::Parser;
+use ansi_term::Colour::*;
 
 #[derive(Parser)]
 #[grammar = "rustlin.pest"]
@@ -25,29 +26,24 @@ fn load_file(path: &str) -> Result<String, std::io::Error> {
 }
 
 pub fn compile(path: &str) {
+    // PrecClimber::new(vec![
+    //     Operator::new(Rule::plus, Assoc::Left) | Operator::new(Rule::minus, Assoc::Left),
+    //     Operator::new(Rule::times, Assoc::Left) | Operator::new(Rule::divide, Assoc::Left),
+    //     Operator::new(Rule::power, Assoc::Right)
+    // ]);
+
     if let Ok(input) = load_file(path) {
         // Steps to compile file
-        println!("{}  \n", input);
+        println!("{} \n", input);
 
         // Eval Grammar
         match RustlinParser::parse_str(Rule::input, &input) {
             Ok(pairs) => {
                 println!("{}", translate_rustlin(pairs).unwrap());
-                
-                // println!("{:?} ", pairs);
-                // for pair in pairs {
-                //     match pair.as_rule() {
-                //         Rule::statement => {
-                //             println!(">>>>>>>>>>>>> {:?}", pair);
-                //         }
-                //         _ => {
-                //             println!("{:?}", pair);
-                //         }
-                //     }
-                // }
-                // pairs.for_each(|p| println!("R_{:?}: [{:?}] -> {}", p.as_rule(), p.clone().into_span(), p.clone().into_span().as_str()));
             }
-            Err(e) => panic!("{}", e),
+            Err(e) => print!("{}\n{}",
+                             Red.bold().paint("Compilation failed at:"),
+                             Yellow.bold().paint(format!("{}\n", e))),
         }
     } else {
         println!("Error while reading file! :/");

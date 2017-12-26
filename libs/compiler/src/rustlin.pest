@@ -33,8 +33,9 @@ op_else = { "else" }
 
 while_loop = { "while" ~ expr ~ block }
 
-expr = { bool_literal | func_call | identifier | float | int_expr }
-int_expr = { int_expr ~ int_op ~ int_expr | int }
+expr = { bool_literal | func_call | identifier | math_expr }
+math_expr = { num ~ num_op ~ num | num }
+num = { int | float | identifier }
 
 func_call = { identifier ~ "(" ~ func_args ~ ")" }
 func_args = { func_arg ~ ("," ~ func_arg)* | func_arg? }
@@ -44,7 +45,7 @@ block       = _{ block_start ~ statement* ~ expr? ~ block_end }
 block_start = { "{" }
 block_end   = { "}" }
 
-int_op = { op_expo | op_mult | op_div | op_mod | op_add | op_sub }
+num_op = { op_expo | op_mult | op_div | op_mod | op_add | op_sub }
 
 bool_not    = _{ op_not ~ expr }
 
