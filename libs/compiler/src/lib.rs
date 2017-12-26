@@ -15,7 +15,7 @@ use pest::Parser;
 struct RustlinParser;
 
 mod translation;
-use translation::validate_rustlin;
+use translation::translate_rustlin;
 
 fn load_file(path: &str) -> Result<String, std::io::Error> {
     let mut file = File::open(path)?;
@@ -32,7 +32,8 @@ pub fn compile(path: &str) {
         // Eval Grammar
         match RustlinParser::parse_str(Rule::input, &input) {
             Ok(pairs) => {
-                validate_rustlin(pairs);
+                println!("{}", translate_rustlin(pairs).unwrap());
+                
                 // println!("{:?} ", pairs);
                 // for pair in pairs {
                 //     match pair.as_rule() {
