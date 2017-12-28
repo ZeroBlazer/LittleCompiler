@@ -7,7 +7,7 @@ use std::collections::btree_map::Entry::{Vacant, Occupied};
 enum Val {
     // Int(i32),
     Float(f32),
-    Func(i32, i32),
+    Func(usize, usize),
 }
 
 use self::Val::*;
@@ -84,6 +84,7 @@ pub fn interpret(instr_tab: InstructionTable) {
     let mut interval = (0, 0);
     for i in 0..limit {
         let inst = instr_tab.get_instruction_at(i).unwrap();
+
         match inst.instr {
             Move => if !in_label {
                     stack.update_val_str(inst.op1.clone(), inst.op2.clone());
@@ -117,7 +118,8 @@ pub fn interpret(instr_tab: InstructionTable) {
             Return => {
                 in_label = false;
                 interval.1 = i;
-                stack.update_val_str(inst.op1.clone(), inst.op2.clone());
+
+                stack.update_val(inst.op1.clone(), Func(interval.0, interval.1));
             }
             // Call => {}
             Print => {

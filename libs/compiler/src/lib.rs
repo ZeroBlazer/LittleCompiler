@@ -39,6 +39,7 @@ pub fn compile(path: &str) {
                 let mut out = File::create("out/interm.ot").expect("Couldn't open write file");
                 let instructions = translate_rustlin(pairs).unwrap();
                 write!(out, "{}", instructions.format_instructions()).expect("Couldn't write output file");
+                println!("\nINSTRUCTION TABLE: {:#?}", instructions);
                 interpret(instructions);
             }
             Err(e) => print!("{}\n{}",

@@ -38,6 +38,7 @@ impl Instruction {
 #[derive(Debug)]
 pub struct InstructionTable {
     inst_vec: Vec<Instruction>,
+    // labels: BTreeMap<String, Vec<Instruction>>
     func_args: BTreeMap<String, Vec<String>>,
     n_temp_elem: usize,
 }
@@ -46,12 +47,16 @@ impl InstructionTable {
     fn new() -> InstructionTable {
         InstructionTable {
             inst_vec: Vec::new(),
+            // labels: BTreeMap::new(),
             func_args: BTreeMap::new(),
             n_temp_elem: 0,
         }
     }
 
     fn push(&mut self, instr: Instruction) {
+        // match instr.instr {
+
+        // }
         self.inst_vec.push(instr);
     }
 
@@ -147,27 +152,41 @@ fn translate_math_expr(
 fn translate_func_args(
     pair: pest::iterators::Pair<Rule, pest::inputs::StrInput<'_>>,
     table: Arc<Mutex<InstructionTable>>,
-) -> Result<String, String> {
-
-    let mut func_ident = String::new();
-
-    let temp = table.lock().unwrap().get_temp_name();
-    table.lock().unwrap().push(Instruction::new(Label, temp.clone(), "".to_string(), "".to_string()));
+    func_ident: &String
+) -> Result<(), String> {
 
     for inner_pair in pair.into_inner() {
+        let mut instr: Vec<Instruction> = Vec::new();
+
         match inner_pair.as_rule() {
             Rule::func_arg => {
-                println!("func_arg: {:?}", inner_pair);
-                // func_move_ident = Some(translate_func_args(inner_pair, table.clone())?),
+                let pairs_it = inner_pair.into_inner();
+                let table_ref = table.lock().unwrap();
+                let var_name_it = table_ref.func_args.get(func_ident).unwrap().iter();
+
+                let arg_iter = var_name_it.zip(pairs_it);
+
+                for (var, pair) in arg_iter {
+                    match pair.as_rule() {
+                        Rule::expr => {
+                            let id_expr = translate_expr(pair, table.clone())?;
+                            instr.push(Instruction::new(Move, var.clone(), id_expr, "".to_string()));
+                        }
+                        _ => println!("CASE WAS NOT HANDLED!!: {:?} @ iter : func_args", pair.as_rule()),
+                    }
+                }
+
+                // println!("func_arg: {:?}", inner_pair);
             }
-            // Rule::identifier => func_ident = inner_pair.clone().into_span().as_str().to_string(),
             _ => println!("CASE WAS NOT HANDLED!!: {:?} @ func_args", inner_pair.as_rule()),
+        }
+
+        for inst in instr.into_iter() {
+            table.lock().unwrap().push(inst);
         }
     }
 
-    table.lock().unwrap().push(Instruction::new(Return, temp.clone(), "".to_string(), "".to_string()));
-
-    Ok(temp)
+    Ok(())
 }
 
 fn translate_func_call(
@@ -176,12 +195,12 @@ fn translate_func_call(
 ) -> Result<String, String> {
 
     let mut func_ident = String::new();
-    let mut func_move_ident: Option<String> = None;
+    // let mut func_move_ident: Option<String> = None;
 
     for inner_pair in pair.into_inner() {
         match inner_pair.as_rule() {
             Rule::identifier => func_ident = inner_pair.clone().into_span().as_str().to_string(),
-            Rule::func_args => func_move_ident = Some(translate_func_args(inner_pair, table.clone())?),
+            Rule::func_args => translate_func_args(inner_pair, table.clone(), &func_ident)?,
             _ => println!("CASE WAS NOT HANDLED!!: {:?} @ func_call", inner_pair.as_rule()),
         }
     }

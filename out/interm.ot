@@ -5,10 +5,7 @@ Label	main
 Move	a	2	
 Mult	_T1	3	a
 Move	b	_T1	
-Label	_T2		
+Move	x	b	
+Call	twice	_T2	
 Return	_T2		
-Call	twice	_T3	
-Return	_T3		
-Label	_T4		
-Return	_T4		
-Call	main	_T5	
+Call	main	_T3	
