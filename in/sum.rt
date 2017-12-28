@@ -1,4 +1,5 @@
 var ab = 10;
 var ba = 12;
-var bab = 2 + 13;
+var bab = ba + 13;
 14.5 * 13.1;
+print(bab);

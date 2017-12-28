@@ -1,18 +1,20 @@
 fn dumb(_x: float, _y: int) {
-    val b: int = 2.0;
-    var a: float;
+    var b: int = 2.0;
+    var a: float = 3.0;
+    a + b
 }
 
 fn main(): int {
-    while true {}
+    // while true {}
 
-    if true {
-        val x: int = 20;
-    } else {
-        var x;
-    }
+    // if true {
+    //     val x: int = 20;
+    // } else {
+    //     var x;
+    // }
 
     dumb(3, 4);
+    12 + 13
 }
 
 main();

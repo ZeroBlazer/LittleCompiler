@@ -16,7 +16,10 @@ use ansi_term::Colour::*;
 struct RustlinParser;
 
 mod translation;
+mod interpreter;
+
 use translation::translate_rustlin;
+use interpreter::interpret;
 
 fn load_file(path: &str) -> Result<String, std::io::Error> {
     let mut file = File::open(path)?;
@@ -33,7 +36,10 @@ pub fn compile(path: &str) {
         // Eval Grammar
         match RustlinParser::parse_str(Rule::input, &input) {
             Ok(pairs) => {
-                println!("{}", translate_rustlin(pairs).unwrap());
+                let mut out = File::create("out/interm.ot").expect("Couldn't open write file");
+                let instructions = translate_rustlin(pairs).unwrap();
+                write!(out, "{}", instructions.format_instructions()).expect("Couldn't write output file");
+                interpret(instructions);
             }
             Err(e) => print!("{}\n{}",
                              Red.bold().paint("Parsing process failed at:"),
