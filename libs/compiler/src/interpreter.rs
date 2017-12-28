@@ -82,8 +82,9 @@ pub fn interpret(instr_tab: InstructionTable) {
 
     let mut in_label = false;
     let mut interval = (0, 0);
-    for i in 0..limit {
-        let inst = instr_tab.get_instruction_at(i).unwrap();
+
+    while pc < limit {
+        let inst = instr_tab.get_instruction_at(pc).unwrap();
 
         match inst.instr {
             Move => if !in_label {
@@ -91,7 +92,7 @@ pub fn interpret(instr_tab: InstructionTable) {
                 },
             Label => {
                 in_label = true;
-                interval.0 = i + 1;
+                interval.0 = pc + 1;
             }
             Sum => if !in_label {
                 if let (Some(term1), Some(term2)) = (stack.get_val(inst.op2.clone()), stack.get_val(inst.op3.clone())) {
@@ -117,16 +118,17 @@ pub fn interpret(instr_tab: InstructionTable) {
             },
             Return => {
                 in_label = false;
-                interval.1 = i;
+                interval.1 = pc;
 
                 stack.update_val(inst.op1.clone(), Func(interval.0, interval.1));
             }
-            // Call => {}
-            Print => {
+            // Call => {
 
-            }
+            // }
+            // Print => {}
             _ => println!("Instruction {:?} was IGNORED", inst.instr),
         }
+        pc += 1;
     }
 
     println!("STACK: {:#?}", stack);
